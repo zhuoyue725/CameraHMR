@@ -165,6 +165,9 @@ class HumanMeshEstimator:
 
 
     def run_on_images(self, image_folder, out_folder):
-        images_list = glob(os.path.join(image_folder, '*'))
+        if not os.path.exists(out_folder):
+            os.makedir(out_folder)
+        image_extensions = ['*.jpg', '*.jpeg', '*.png', '*.gif', '*.bmp', '*.tiff', '*.webp']
+        images_list = [image for ext in image_extensions for image in glob(os.path.join(image_folder, ext))]
         for ind, img_path in enumerate(images_list):
             self.process_image(img_path, out_folder, ind)

@@ -1,17 +1,30 @@
 
+
+
 <div align="center">
 
-# **CameraHMR: Aligning People with Perspective**  
-## **3DV 2025**  
-🔗 [**Project Page**](https://camerahmr.is.tue.mpg.de) | 📄 [**ArXiV Paper**](https://arxiv.org/abs/2411.08128) | 🎥 [**Video**](https://youtu.be/aclZSzUIj5o)
+# **CameraHMR: Aligning People with Perspective (3DV 2025)**  
+
+[**Priyanka Patel**](https://pixelite1201.github.io/) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [**Michael J. Black**](https://ps.is.mpg.de/person/black)
+
+
+---
+
+🌐 [**Project Page**](https://camerahmr.is.tue.mpg.de) | 📄 [**ArXiv Paper**](https://arxiv.org/abs/2411.08128) | 🎥 [**Video Presentation**](https://youtu.be/aclZSzUIj5o)
+
+---
+
+![](teaser/teaser.jpg)  
+*Figure: CameraHMR Results*
 
 </div>
 
 ---
 
+
 ## 🚀 **Release**
 
-- ** CameraHMR Demo Code**
+- **CameraHMR Demo Code**
 
 
 
@@ -22,28 +35,15 @@
 -  **HumanFoV and DenseKP Code**
 
 
-##  **Data**
+## **Installation**
+Create a conda environment and install all the requirements.
 
-You can download the fitted SMPL parameters for **INSTA/AIC images** via the [CameraHMR website](https://camerahmr.is.tue.mpg.de/index.html) (registration required).
-
-Alternatively, use the following script:
-
-```bash
-bash fetch_training_data.sh
 ```
-
-> **Note:** We cannot provide the original AIC/INSTA images. These images must be obtained from their original sources. For convenience, you can use the [4D-Humans repository](https://github.com/shubham-goel/4D-Humans?tab=readme-ov-file), which offers these images in WebDataset format. To extract images from the WebDataset, refer to [this script](core/utils/extract_images_from4dhumans.py).
-
-###  **Visualize the Fitted SMPL Mesh**
-
-To overlay the fitted SMPL mesh on your images, use the following command:
-
-```bash
-python dataset_vis.py --image_folder path_to_img_folder --output_folder path_for_output_file --npz_path path_to_npz_file
+conda create -n camerahmr python=3.10
+conda activate camerahmr
+pip install torch==2.0.0 torchvision==0.15.1 torchaudio==2.0.1 --index-url https://download.pytorch.org/whl/cu118
+pip install -r requirements.txt
 ```
-path_to_img_folder corresponds to path of download INSTA/AIC images. path_to_npz_file corresponds to downloaded SMPL params.
-
-
 
 ## 🎬 **Demo**
 
@@ -59,11 +59,33 @@ Alternatively, download files manually from the [CameraHMR website](https://came
 
 ###  **Generate 3D SMPL Mesh and Overlay Image**
 
-Run the demo with:
+Run the demo with following command. It will run demo on all images in the specified --image_folder, and save renderings of the reconstructions and the output mesh in --out_folder.
+
+```
+python demo.py --image_folder demo_images --output_folder output_images
+```
+
+##  **Data**
+
+You can download the training data; fitted SMPL parameters for **INSTA/AIC images** from the [CameraHMR website](https://camerahmr.is.tue.mpg.de/index.html) (registration required).
+
+Alternatively, use the following script:
 
 ```bash
-python demo.py --image_folder path_to_input_images --output_folder path_to_output_folder
+bash fetch_training_data.sh
 ```
+
+> **Note:** We cannot provide the original AIC/INSTA images. These images must be obtained from their original sources. For convenience, you can use the [4D-Humans repository](https://github.com/shubham-goel/4D-Humans?tab=readme-ov-file), which offers these images in WebDataset format. To extract images from the WebDataset, refer to [this script](core/utils/extract_images_from4dhumans.py).
+
+
+To overlay the fitted SMPL mesh on your images, use the following command:
+
+```bash
+python dataset_vis.py --image_folder path_to_img_folder --output_folder path_for_output_file --npz_path path_to_npz_file
+```
+path_to_img_folder corresponds to path of download INSTA/AIC images. path_to_npz_file corresponds to downloaded SMPL params.
+
+
 
 ## 🙌 **Acknowledgements**
 
