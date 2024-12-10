@@ -10,7 +10,7 @@
 
 ---
 
-🌐 [**Project Page**](https://camerahmr.is.tue.mpg.de) | 📄 [**ArXiv Paper**](https://arxiv.org/abs/2411.08128) | 🎥 [**Video Presentation**](https://youtu.be/aclZSzUIj5o)
+🌐 [**Project Page**](https://camerahmr.is.tue.mpg.de) | 📄 [**ArXiv Paper**](https://arxiv.org/abs/2411.08128) | 🎥 [**Video Results**](https://youtu.be/aclZSzUIj5o)
 
 ---
 
