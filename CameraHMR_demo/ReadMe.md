@@ -14,7 +14,7 @@
 
 ---
 
-![](teaser/teaser.jpg)  
+![](teaser/teaser.png)  
 *Figure: CameraHMR Results*
 
 </div>
@@ -57,7 +57,6 @@ bash fetch_demo_data.sh
 
 Alternatively, download files manually from the [CameraHMR website](https://camerahmr.is.tue.mpg.de). Ensure to update paths in [`constants.py`](core/constants.py) if doing so manually.
 
-###  **Generate 3D SMPL Mesh and Overlay Image**
 
 Run the demo with following command. It will run demo on all images in the specified --image_folder, and save renderings of the reconstructions and the output mesh in --out_folder.
 

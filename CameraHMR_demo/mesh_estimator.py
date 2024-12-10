@@ -45,7 +45,7 @@ def resize_image(img, target_size):
     return aspect_ratio, final_img
 
 class HumanMeshEstimator:
-    def __init__(self, smpl_model_path=SMPL_MODEL_PATH, threshold=0.85):
+    def __init__(self, smpl_model_path=SMPL_MODEL_PATH, threshold=0.25):
         self.device = (torch.device('cuda') if torch.cuda.is_available() else torch.device('cpu'))
         self.model = self.init_model()
         self.detector = self.init_detector(threshold)
@@ -124,14 +124,13 @@ class HumanMeshEstimator:
         
         fname, img_ext = os.path.splitext(os.path.basename(img_path))
         overlay_fname = os.path.join(output_img_folder, f'{os.path.basename(fname)}_{i:06d}{img_ext}')
-        params_fname = os.path.join(output_img_folder, f'{os.path.basename(fname)}_{i:06d}.json')
         smpl_fname = os.path.join(output_img_folder, f'{os.path.basename(fname)}_{i:06d}.smpl')
         mesh_fname = os.path.join(output_img_folder, f'{os.path.basename(fname)}_{i:06d}.obj')
 
         # Detect humans in the image
         det_out = self.detector(img_cv2)
         det_instances = det_out['instances']
-        valid_idx = (det_instances.pred_classes == 0) & (det_instances.scores > 0.85)
+        valid_idx = (det_instances.pred_classes == 0) & (det_instances.scores > 0.5)
         boxes = det_instances.pred_boxes.tensor[valid_idx].cpu().numpy()
         bbox_scale = (boxes[:, 2:4] - boxes[:, 0:2]) / 200.0 
         bbox_center = (boxes[:, 2:4] + boxes[:, 0:2]) / 2.0
@@ -139,7 +138,7 @@ class HumanMeshEstimator:
         # Get Camera intrinsics using HumanFoV Model
         cam_int = self.get_cam_intrinsics(img_cv2)
         dataset = Dataset(img_cv2, bbox_center, bbox_scale, cam_int, False, img_path)
-        dataloader = torch.utils.data.DataLoader(dataset, batch_size=16, shuffle=False, num_workers=10)
+        dataloader = torch.utils.data.DataLoader(dataset, batch_size=32, shuffle=False, num_workers=10)
 
         for batch in dataloader:
             batch = recursive_to(batch, self.device)
@@ -166,7 +165,7 @@ class HumanMeshEstimator:
 
     def run_on_images(self, image_folder, out_folder):
         if not os.path.exists(out_folder):
-            os.makedir(out_folder)
+            os.makedirs(out_folder)
         image_extensions = ['*.jpg', '*.jpeg', '*.png', '*.gif', '*.bmp', '*.tiff', '*.webp']
         images_list = [image for ext in image_extensions for image in glob(os.path.join(image_folder, ext))]
         for ind, img_path in enumerate(images_list):
