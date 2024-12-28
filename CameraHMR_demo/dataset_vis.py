@@ -16,6 +16,8 @@ def make_parser():
         help="Path to folder output folder.")
     parser.add_argument("--npz_path", type=str, default='data/training-labels/aic-release.npz',
         help="Path to folder output folder.")
+    parser.add_argument("--ind", type=int, default=0,
+        help="index of npz file")
     return parser
 
 
@@ -60,12 +62,13 @@ def main():
     IMAGE_FOLDER = args.image_folder
     NPZ_PATH = args.npz_path
     OUTPUT_DIR = args.output_folder
+    ind = args.ind
 
     # Load SMPL model
     smpl_neutral = load_smpl_model(MODEL_FOLDER)
 
     # Load data from npz
-    data = load_data(NPZ_PATH, IMAGE_FOLDER, 0)
+    data = load_data(NPZ_PATH, IMAGE_FOLDER, ind)
 
     # Load image
     img = cv2.imread(data["img_path"])

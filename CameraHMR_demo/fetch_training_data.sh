@@ -10,7 +10,9 @@ read -p "Password (CameraHMR):" password
 username=$(urle $username)
 password=$(urle $password)
 
-mkdir -p data/training-data
+mkdir -p data/training-labels
 wget --post-data "username=$username&password=$password" 'https://download.is.tue.mpg.de/download.php?domain=camerahmr&sfile=insta1-release.npz' -O './data/training-labels/insta1-release.npz' --no-check-certificate --continue
 wget --post-data "username=$username&password=$password" 'https://download.is.tue.mpg.de/download.php?domain=camerahmr&sfile=insta2-release.npz' -O './data/training-labels/insta2-release.npz' --no-check-certificate --continue
 wget --post-data "username=$username&password=$password" 'https://download.is.tue.mpg.de/download.php?domain=camerahmr&sfile=aic-release.npz' -O './data/training-labels/aic-release.npz' --no-check-certificate --continue
+wget --post-data "username=$username&password=$password" 'https://download.is.tue.mpg.de/download.php?domain=camerahmr&sfile=mpii-release.npz' -O './data/training-labels/mpii-release.npz' --no-check-certificate --continue
+wget --post-data "username=$username&password=$password" 'https://download.is.tue.mpg.de/download.php?domain=camerahmr&sfile=coco-release.npz' -O './data/training-labels/coco-release.npz' --no-check-certificate --continue
