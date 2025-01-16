@@ -7,6 +7,32 @@ import cv2
 from typing import List, Dict, Tuple
 from yacs.config import CfgNode
 
+
+def resize_image(img, target_size):
+    height, width = img.shape[:2]
+    aspect_ratio = width / height
+
+    # Calculate the new size while maintaining the aspect ratio
+    if aspect_ratio > 1:
+        new_width = target_size
+        new_height = int(target_size / aspect_ratio)
+    else:
+        new_width = int(target_size * aspect_ratio)
+        new_height = target_size
+
+    # Resize the image using OpenCV
+    resized_img = cv2.resize(img, (new_width, new_height), interpolation=cv2.INTER_AREA)
+
+    # Create a new blank image with the target size
+    final_img = np.ones((target_size, target_size, 3), dtype=np.uint8) * 255
+
+    # Paste the resized image onto the blank image, centering it
+    start_x = (target_size - new_width) // 2
+    start_y = (target_size - new_height) // 2
+    final_img[start_y:start_y + new_height, start_x:start_x + new_width] = resized_img
+
+    return aspect_ratio, final_img
+
 def expand_to_aspect_ratio(input_shape, target_aspect_ratio=None):
     """Increase the size of the bounding box to match the target shape."""
     if target_aspect_ratio is None:

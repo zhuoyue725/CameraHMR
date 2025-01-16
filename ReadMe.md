@@ -25,12 +25,10 @@
 ## 🚀 **Release**
 
 - **CameraHMR Demo Code**
-
+- **CameraHMR Training and Evaluation Code**
 
 
 ## 🕒 **Coming Soon**
-
--  **CameraHMR Training Code**  
 -  **CamSMPLify Code**  
 -  **HumanFoV and DenseKP Code**
 
@@ -64,14 +62,14 @@ Run the demo with following command. It will run demo on all images in the speci
 python demo.py --image_folder demo_images --output_folder output_images
 ```
 
-##  **Data**
+##  **4DHumans Labels with full perspective camera**
 
-You can download the training data; fitted SMPL parameters for **INSTA/AIC images** from the [CameraHMR website](https://camerahmr.is.tue.mpg.de/index.html) (registration required).
+You can download the training data; fitted SMPL parameters for **INSTA/AIC/COCO/MPII images** from the [CameraHMR website](https://camerahmr.is.tue.mpg.de/index.html) (registration required).
 
 Alternatively, use the following script:
 
 ```bash
-bash fetch_training_data.sh
+bash scripts/fetch_4dhumans_training_labels.sh
 ```
 
 > **Note:** We cannot provide the original AIC/INSTA images. These images must be obtained from their original sources. For convenience, you can use the [4D-Humans repository](https://github.com/shubham-goel/4D-Humans?tab=readme-ov-file), which offers these images in WebDataset format. To extract images from the WebDataset, refer to [this script](core/utils/extract_images_from4dhumans.py).
@@ -85,6 +83,8 @@ python dataset_vis.py --image_folder path_to_img_folder --output_folder path_for
 path_to_img_folder corresponds to path of download INSTA/AIC images. path_to_npz_file corresponds to downloaded SMPL params.
 
 
+## Training and Evaluation
+Please check out the [document](docs/training.md) for Training and Evaluation detail instructions. 
 
 ## 🙌 **Acknowledgements**
 
