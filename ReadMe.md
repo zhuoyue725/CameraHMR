@@ -102,12 +102,11 @@ This project leverages outstanding resources from:
 If you find **CameraHMR** useful in your work, please cite:
 
 ```bibtex
-@article{patel2024camerahmr,
-  title={CameraHMR: Aligning People with Perspective},
-  author={Patel, Priyanka and Black, Michael J},
-  journal={arXiv preprint arXiv:2411.08128},
-  year={2024}
-}
+@inproceedings{patel2024camerahmr,
+title={{CameraHMR}: Aligning People with Perspective},
+author={Patel, Priyanka and Black, Michael J.},
+booktitle={International Conference on 3D Vision (3DV)},
+year={2025} }
 ```
 
 
