@@ -108,7 +108,7 @@ python train_keypoints.py data=densekp_train experiment=densekp exp_name=train_d
 To run the demo on example images, download the pretrained checkpoint from the [CameraHMR](https://camerahmr.is.tue.mpg.de) website. You can find it in the **Download** page under **Checkpoint** section. Then, use the following command to provide the path to the checkpoint and execute the demo.
 
 ```
-python demo_keypoints.py --ckpt path_to_densekp_checkpoint
+python demo_keypoints.py --checkpoint path_to_densekp_checkpoint
 ```
 
 # CamSMPLify
