@@ -14,4 +14,4 @@ chumpy
 pyrootutils==1.0.4
 timm==1.0.12
 einops==0.8.0
-flattendict
+flatten_dict
