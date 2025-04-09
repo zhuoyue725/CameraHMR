@@ -1,12 +1,9 @@
 
-
-
 <div align="center">
 
 # **CameraHMR: Aligning People with Perspective (3DV 2025)**  
 
 [**Priyanka Patel**](https://pixelite1201.github.io/) &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; [**Michael J. Black**](https://ps.is.mpg.de/person/black)
-
 
 ---
 
@@ -23,14 +20,10 @@
 
 
 ## 🚀 **Release**
-
 - **CameraHMR Demo Code**
 - **CameraHMR Training and Evaluation Code**
-
-
-## 🕒 **Coming Soon**
--  **CamSMPLify Code**  
--  **HumanFoV and DenseKP Code**
+- **DenseKP Code**
+- **CamSMPLify Code**  
 
 
 ## **Installation**
@@ -56,7 +49,7 @@ bash fetch_demo_data.sh
 Alternatively, download files manually from the [CameraHMR website](https://camerahmr.is.tue.mpg.de). Ensure to update paths in [`constants.py`](core/constants.py) if doing so manually.
 
 
-Run the demo with following command. It will run demo on all images in the specified --image_folder, and save renderings of the reconstructions and the output mesh in --out_folder.
+Run the demo with following command. It will run demo on all images in the specified --image_folder, and save renderings of the reconstructions and the output mesh in --out_folder. 
 
 ```
 python demo.py --image_folder demo_images --output_folder output_images
@@ -83,7 +76,7 @@ python dataset_vis.py --image_folder path_to_img_folder --output_folder path_for
 path_to_img_folder corresponds to path of download INSTA/AIC images. path_to_npz_file corresponds to downloaded SMPL params.
 
 
-## Training and Evaluation
+## Training and Evaluation 
 Please check out the [document](docs/training.md) for Training and Evaluation detail instructions. 
 
 ## 🙌 **Acknowledgements**
@@ -108,7 +101,6 @@ author={Patel, Priyanka and Black, Michael J.},
 booktitle={International Conference on 3D Vision (3DV)},
 year={2025} }
 ```
-
 
 
 <div align="center">

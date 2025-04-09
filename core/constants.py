@@ -1,5 +1,6 @@
 CHECKPOINT_PATH='data/pretrained-models/camerahmr_checkpoint_cleaned.ckpt'
 CAM_MODEL_CKPT='data/pretrained-models/cam_model_cleaned.ckpt'
+DENSEKP_CKPT='data/pretrained-models/densekp.ckpt'
 SMPL_MEAN_PARAMS_FILE='data/smpl_mean_params.npz'
 SMPL_MODEL_PATH='data/models/SMPL/SMPL_NEUTRAL.pkl'
 DETECTRON_CKPT='data/pretrained-models/model_final_f05665.pkl'
@@ -21,6 +22,7 @@ NUM_BETAS = 10
 NUM_JOINTS = 44
 NUM_PARAMS_SMPL = 24
 NUM_PARAMS_SMPLX = 22 # Only body
+NUM_DENSEKP_SMPL = 138
 H36M_TO_J17 = [6, 5, 4, 1, 2, 3, 16, 15, 14, 11, 12, 13, 8, 10, 0, 7, 9]
 H36M_TO_J14 = H36M_TO_J17[:14]
 body_permutation = [0, 1, 5, 6, 7, 2, 3, 4, 8, 12, 13, 14, 9, 10, 11, 16, 15, 18, 17, 22, 23, 24, 19, 20, 21]

@@ -19,7 +19,7 @@ class Dataset(torch.utils.data.Dataset):
                  img_cv2: np.array,
                  bbox_center: np.array,
                  bbox_scale: np.array,
-                 cam_int: np.array,
+                 cam_int: np.array = None,
                  train: bool = False,
                  img_path = None,
                  **kwargs):
@@ -31,7 +31,10 @@ class Dataset(torch.utils.data.Dataset):
         assert train == False, "ViTDetDataset is only for inference"
         self.train = train
         self.img_size = IMAGE_SIZE
-        self.cam_int = cam_int
+        if cam_int is not None:
+            self.cam_int = cam_int
+        else:
+            self.cam_int = np.array([]) # DenseKP model doesn't need cam_int
         self.mean = 255. * np.array(IMAGE_MEAN)
         self.std = 255. * np.array(IMAGE_STD)
         self.normalize_img = Normalize(mean=IMAGE_MEAN,

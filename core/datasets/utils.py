@@ -517,6 +517,111 @@ def rot_aa(aa: np.array, rot: float) -> np.array:
     aa = (resrot.T)[0]
     return aa.astype(np.float32)
 
+def get_example_projverts(img_path: str|np.ndarray, center_x: float, center_y: float,
+                         width: float, height: float,
+                         keypoints_2d: np.array,
+                         flip_kp_permutation: List[int],
+                         proj_verts: np.array = None,
+                         patch_width: int = 0, patch_height: int = 0,
+                         mean: np.array = None, std: np.array = None,
+                         do_augment: bool = False, augm_config: CfgNode = None,
+                         is_bgr: bool = True,
+                         use_skimage_antialias: bool = False,
+                         border_mode: int = cv2.BORDER_CONSTANT,
+                         return_trans: bool = False,
+                         dataset: str = None):
+    """
+    Get an example from the dataset and optionally apply augmentations.
+    Combines functionalities of get_example and get_example_projverts.
+    """
+    # Load Image
+    if isinstance(img_path, str):
+        cvimg = cv2.imread(img_path, cv2.IMREAD_COLOR | cv2.IMREAD_IGNORE_ORIENTATION)
+        if dataset and ('closeup' in dataset or 'portrait' in dataset):
+            cvimg = cv2.rotate(cvimg, cv2.ROTATE_90_CLOCKWISE)
+        if not isinstance(cvimg, np.ndarray):
+            raise IOError(f"Fail to read {img_path}")
+    elif isinstance(img_path, np.ndarray):
+        cvimg = img_path
+    else:
+        raise TypeError('img_path must be either a string or a numpy array')
+    
+    img_height, img_width, img_channels = cvimg.shape
+    img_size = np.array([img_height, img_width])
+
+    # Augmentation Parameters
+    if do_augment:
+        scale, rot, do_flip, do_extreme_crop, extreme_crop_lvl, color_scale, tx, ty = do_augmentation(augm_config)
+    else:
+        scale, rot, do_flip, do_extreme_crop, extreme_crop_lvl, color_scale, tx, ty = 1.0, 0, False, False, 0, [1.0, 1.0, 1.0], 0., 0.
+    
+    if width < 1 or height < 1:
+        breakpoint()
+    
+    if do_extreme_crop:
+        if extreme_crop_lvl == 0:
+            center_x1, center_y1, width1, height1 = extreme_cropping(center_x, center_y, width, height, keypoints_2d)
+        elif extreme_crop_lvl == 1:
+            center_x1, center_y1, width1, height1 = extreme_cropping_aggressive(center_x, center_y, width, height, keypoints_2d)
+        
+        THRESH = 4
+        if width1 >= THRESH and height1 >= THRESH:
+            center_x, center_y, width, height = center_x1, center_y1, width1, height1
+
+    center_x += width * tx
+    center_y += height * ty
+
+    # Image Processing
+    if use_skimage_antialias:
+        downsampling_factor = (patch_width / (width * scale))
+        if downsampling_factor > 1.1:
+            cvimg = gaussian(cvimg, sigma=(downsampling_factor-1)/2, channel_axis=2, preserve_range=True, truncate=3.0)
+    
+    # Augmentations
+    if do_augment and augm_config.USE_ALB:
+        import albumentations as A
+        aug_comp = [A.Downscale(0.5, 0.9, interpolation=0, p=0.1),
+                    A.ImageCompression(20, 100, p=0.1),
+                    A.RandomRain(blur_value=4, p=0.1),
+                    A.MotionBlur(blur_limit=(3, 15), p=0.2),
+                    A.Blur(blur_limit=(3, 10), p=0.1),
+                    A.RandomSnow(brightness_coeff=1.5, snow_point_lower=0.2, snow_point_upper=0.4)]
+        aug_mod = [A.CLAHE((1, 11), (10, 10), p=0.2), A.ToGray(p=0.2),
+                   A.RandomBrightnessContrast(p=0.2),
+                   A.MultiplicativeNoise(multiplier=[0.5, 1.5], elementwise=True, per_channel=True, p=0.2),
+                   A.HueSaturationValue(hue_shift_limit=20, sat_shift_limit=30, val_shift_limit=20, p=0.2),
+                   A.Posterize(p=0.1),
+                   A.RandomGamma(gamma_limit=(80, 200), p=0.1),
+                   A.Equalize(mode='cv', p=0.1)]
+        albumentation_aug = A.Compose([A.OneOf(aug_comp, p=augm_config.ALB_PROB),
+                                       A.OneOf(aug_mod, p=augm_config.ALB_PROB)])
+        cvimg = albumentation_aug(image=cvimg)['image']
+    
+    # Generate Image Patch
+    img_patch_cv, trans = generate_image_patch_cv2(cvimg, center_x, center_y, width, height,
+                                                    patch_width, patch_height, do_flip, scale, rot,
+                                                    border_mode=border_mode)
+    
+    image = img_patch_cv[:, :, ::-1] if is_bgr else img_patch_cv.copy()
+    img_patch = convert_cvimg_to_tensor(image)
+
+    # Normalize Image Patch
+    for n_c in range(min(img_channels, 3)):
+        img_patch[n_c, :, :] = np.clip(img_patch[n_c, :, :] * color_scale[n_c], 0, 255)
+        if mean is not None and std is not None:
+            img_patch[n_c, :, :] = (img_patch[n_c, :, :] - mean[n_c]) / std[n_c]
+    
+    # Transform Keypoints
+    keypoints_2d[:, :2] = trans_points2d_parallel(keypoints_2d[:, 0:2], trans)
+    keypoints_2d[:, :-1] = keypoints_2d[:, :-1] / patch_width - 0.5
+    
+    # Transform Proj Verts if provided
+    if proj_verts is not None:
+        proj_verts[:, :2] = trans_points2d_parallel(proj_verts[:, 0:2], trans)
+        proj_verts[:, :-1] = proj_verts[:, :-1] / patch_width - 0.5
+
+    return img_patch, img_patch_cv, img_size, center_x, center_y, width, height, keypoints_2d, proj_verts, trans
+
 
 def get_example(img_path: str|np.ndarray, center_x: float, center_y: float,
                 width: float, height: float,
