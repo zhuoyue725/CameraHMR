@@ -11,6 +11,8 @@ from typing import List, Set, Dict, Tuple, Optional
 
 os.environ['PYOPENGL_PLATFORM'] = 'egl'
 
+LIGHT_BLUE=(0.65098039,  0.74117647,  0.85882353)
+
 def get_colors():
     colors = {
         'pink': np.array([197, 27, 125]),  # L lower leg
@@ -19,11 +21,11 @@ def get_colors():
         'green': np.array([77, 146, 33]),  # L upper arm
         'red': np.array([215, 48, 39]),  # head
         'light_red': np.array([252, 146, 114]),  # head
-        'light_orange': np.array([252, 141, 89]),  # chest
+        'orange': np.array([165, 189, 216]),  # chest
         'purple': np.array([118, 42, 131]),  # R lower leg
         'light_purple': np.array([175, 141, 195]),  # R upper
         'light_blue': np.array([145, 191, 219]),  # R lower arm
-        'blue': np.array([69, 117, 180]),  # R upper arm
+        'blue': np.array([165, 100, 216]),  # R upper arm
         'gray': np.array([130, 130, 130]),  #
         'white': np.array([255, 255, 255]),  #
         'pinkish': np.array([204, 77, 77]),
@@ -62,7 +64,7 @@ def render_overlay_image(
         camera_rotation: np.ndarray,
         focal_length: Tuple,
         camera_center: Tuple,
-        mesh_color: str = 'purple',
+        mesh_color: str = 'blue', # purple
         alpha: float = 1.0,
         faces: np.ndarray = None,
         sideview_angle: int = 0,
@@ -73,10 +75,11 @@ def render_overlay_image(
 
     mesh_color = get_colors()[mesh_color]
 
+    # (0.65098039,  0.74117647,  0.85882353
     material = pyrender.MetallicRoughnessMaterial(
-        metallicFactor=0.2,
+        metallicFactor=0.0,
         alphaMode='OPAQUE',
-        baseColorFactor=(mesh_color[0] / 255., mesh_color[1] / 255., mesh_color[2] / 255., alpha))
+        baseColorFactor=(0.65098039, 0.74117647, 0.85882353, 1.0))
 
     camera_translation[0] *= -1.
 
@@ -145,6 +148,26 @@ def render_overlay_image(
     return output_img, color[:, :, :3]*valid_mask
 
 
+def vertices_to_trimesh(self, vertices, camera_translation, mesh_base_color=(1.0, 1.0, 0.9), 
+                        rot_axis=[1,0,0], rot_angle=0,):
+    # material = pyrender.MetallicRoughnessMaterial(
+    #     metallicFactor=0.0,
+    #     alphaMode='OPAQUE',
+    #     baseColorFactor=(*mesh_base_color, 1.0))
+    vertex_colors = np.array([(*mesh_base_color, 1.0)] * vertices.shape[0])
+    print(vertices.shape, camera_translation.shape)
+    mesh = trimesh.Trimesh(vertices.copy() + camera_translation, self.faces.copy(), vertex_colors=vertex_colors)
+    # mesh = trimesh.Trimesh(vertices.copy(), self.faces.copy())
+    
+    rot = trimesh.transformations.rotation_matrix(
+            np.radians(rot_angle), rot_axis)
+    mesh.apply_transform(rot)
+
+    rot = trimesh.transformations.rotation_matrix(
+        np.radians(180), [1, 0, 0])
+    mesh.apply_transform(rot)
+    return mesh
+    
 def render_nonoverlay_image(
         image: np.ndarray,
         camera_translation: np.ndarray,
@@ -152,7 +175,7 @@ def render_nonoverlay_image(
         camera_rotation: np.ndarray,
         focal_length: Tuple,
         camera_center: Tuple,
-        mesh_color: str = 'purple',
+        mesh_color: str = 'blue', # purple
         alpha: float = 1.0,
         faces: np.ndarray = None,
         sideview_angle: int = 0,
@@ -163,14 +186,16 @@ def render_nonoverlay_image(
 
     mesh_color = get_colors()[mesh_color]
 
-    material = pyrender.MetallicRoughnessMaterial(
-        metallicFactor=0.2,
-        alphaMode='OPAQUE',
-        baseColorFactor=(mesh_color[0] / 255., mesh_color[1] / 255., mesh_color[2] / 255., alpha))
+    mesh_base_color = (0.65098039, 0.34117647, 0.85882353)
+    # material = pyrender.MetallicRoughnessMaterial(
+    #     metallicFactor=0.0,
+    #     alphaMode='OPAQUE',
+    #     baseColorFactor=(*mesh_base_color, 1.0))
 
     camera_translation[0] *= -1.
 
-    mesh = trimesh.Trimesh(vertices, faces, process=False)
+    vertex_colors = np.array([(*mesh_base_color, 1.0)] * vertices.shape[0])
+    mesh = trimesh.Trimesh(vertices, faces, process=False, vertex_colors=vertex_colors)
 
     if correct_ori:
         rot = trimesh.transformations.rotation_matrix(
@@ -187,7 +212,7 @@ def render_nonoverlay_image(
         if not mesh_filename.endswith('_rot.obj'):
             np.save(mesh_filename.replace('.obj', '.npy'), camera_translation)
 
-    mesh = pyrender.Mesh.from_trimesh(mesh, material=material)
+    mesh = pyrender.Mesh.from_trimesh(mesh)
 
     scene = pyrender.Scene(bg_color=[1.0, 1.0, 1.0, 1.0],
                            ambient_light=np.ones(3) * 0)
@@ -209,7 +234,7 @@ def render_nonoverlay_image(
 
 
     # Create light source
-    light = pyrender.DirectionalLight(color=[1.0, 1.0, 1.0], intensity=5.0)
+    light = pyrender.DirectionalLight(color=[1.0, 1.0, 1.0], intensity=3.0)
     # for DirectionalLight, only rotation matters
     light_pose = trimesh.transformations.rotation_matrix(np.radians(-45), [1, 0, 0])
     scene.add(light, pose=light_pose)

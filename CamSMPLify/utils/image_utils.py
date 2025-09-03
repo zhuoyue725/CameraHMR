@@ -2,7 +2,7 @@ import cv2
 import torch
 import joblib
 import scipy.misc
-from skimage.transform import rotate, resize
+from skimage.transform import rotate, resize # ValueError: numpy.dtype size changed, may indicate binary incompatibility. Expected 96 from C header, got 88 from PyObject
 import numpy as np
 import jpeg4py as jpeg
 from loguru import logger

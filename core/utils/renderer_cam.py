@@ -66,7 +66,7 @@ def render_overlay_image(
         camera_rotation: np.ndarray,
         focal_length: Tuple,
         camera_center: Tuple,
-        mesh_color: str = 'gray',
+        mesh_color: str = 'blue',
         alpha: float = 1.0,
         faces: np.ndarray = None,
         sideview_angle: int = 0,
@@ -161,7 +161,7 @@ def render_image_group(
         camera_rotation: torch.tensor,
         focal_length: Tuple,
         camera_center: Tuple,
-        mesh_color: str = 'pinkish',
+        mesh_color: str = 'orange', # 'pinkish'
         alpha: float = 1.0,
         faces: np.ndarray = None,
         mesh_filename: str = None,

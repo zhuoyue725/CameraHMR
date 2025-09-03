@@ -13,7 +13,7 @@ class CameraHMR(pl.LightningModule):
         self.smpl_head = build_smpl_head()
 
     def forward(self, batch):
-        x = batch['img']
+        x = batch['img'] # [1, 3, 256, 256]
         batch_size = x.shape[0]
         conditioning_feats = self.backbone(x[:, :, :, 32:-32])
 

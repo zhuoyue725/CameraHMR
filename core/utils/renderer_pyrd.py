@@ -47,7 +47,9 @@ class Renderer(object):
             mesh = trimesh.Trimesh(verts[n], self.faces)
             mesh.apply_transform(rot)
             if self.same_mesh_color:
-                mesh_color =colorsys.hsv_to_rgb(1.0, 0.6, 1.0)
+                # LIGHT_BLUE=(0.65098039,  0.74117647,  0.85882353)
+                # mesh_color =colorsys.hsv_to_rgb(1.0, 0.6, 1.0)
+                mesh_color =colorsys.hsv_to_rgb(0.65098039,  0.74117647,  0.9) # 橙色 241,189,155
 
             else:
                 mesh_color = colorsys.hsv_to_rgb((float(n) / num_people), 0.6, 1.0)

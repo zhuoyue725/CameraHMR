@@ -67,7 +67,7 @@ class SMPLify:
         self.downsample_mat = pickle.load(open(DOWNSAMPLE_MAT, 'rb')).to_dense().cuda()
 
             
-    def visualize_result(self, image_full, smpl_output, focal_length, bbox_center, bbox_scale, camera_translation, cam_int):
+    def visualize_result(self, image_full, smpl_output, focal_length, bbox_center, bbox_scale, camera_translation, cam_int, imgname=None):
         vertices3d = smpl_output.vertices
         img_h, img_w, _ = image_full.shape
 
@@ -88,11 +88,24 @@ class SMPLify:
         
         combined_img = np.concatenate([render_img, non_overlay_img], axis=1)
 
+        # 解析出文件名
+        imgnamebase = os.path.basename(imgname)
+        
+        # 指定保存图片的路径和文件名
+        output_dir = './output/demo_images/emdb_stand'
+        if not os.path.exists(output_dir):  # 如果目录不存在，则创建目录
+            os.makedirs(output_dir)
+        save_path = os.path.join(output_dir, imgnamebase)
+        
+        # 保存图片
+        cv2.imwrite(save_path, combined_img)
+        print(f"[INFO] Saved image to {save_path}")
+        
         # Display instructions in the console
-        print("[INFO] Press any key to continue fitting")
+        # print("[INFO] Press any key to continue fitting")
 
-        cv2.imshow("Visualization", combined_img)
-        pressed_key = cv2.waitKey()
+        # cv2.imshow("Visualization", combined_img)
+        # pressed_key = cv2.waitKey()
 
 
     def __call__(self, args, init_pose, init_betas, cam_t, bbox_center, bbox_scale, cam_int, imgname, joints_2d_=None,
@@ -141,7 +154,7 @@ class SMPLify:
             image_full = read_img(imgname)
             image_full = image_full[:, :, ::-1]
             img_h, img_w, _ = image_full.shape
-            return_val = self.visualize_result(image_full, smpl_output, focal_length, bbox_center, bbox_scale, camera_translation, cam_int)
+            return_val = self.visualize_result(image_full, smpl_output, focal_length, bbox_center, bbox_scale, camera_translation, cam_int, imgname)
 
         def run_optimization(optimizer, num_iters, pose_prior_weight, beta_prior_weight):
             nonlocal prev_loss
@@ -171,7 +184,7 @@ class SMPLify:
                 optimizer.step()
 
                 if i % args.vis_int == 0 and self.vis:
-                    return_val = self.visualize_result(image_full, smpl_output, focal_length, bbox_center, bbox_scale, camera_translation, cam_int)
+                    return_val = self.visualize_result(image_full, smpl_output, focal_length, bbox_center, bbox_scale, camera_translation, cam_int, imgname)
           
             return loss
         
