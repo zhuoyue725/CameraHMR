@@ -1,0 +1,58 @@
+{
+    // 使用 IntelliSense 了解相关属性。 
+    // 悬停以查看现有属性的描述。
+    // 欲了解更多信息，请访问: https://go.microsoft.com/fwlink/?linkid=830387
+    "version": "0.2.0",
+    "configurations": [
+        // # 创建一个名为 "demo_run" 的会话
+        // screen -S demo_run
+
+        // # 进入后，运行你的脚本
+        // cd /home/zzb/pydata/recons/CameraHMR
+        // conda activate camerahmr
+        // bash scripts/run_demo_3dpw.sh
+
+        // python demo.py --image_folder demo_images --output_folder output_images
+        // python demo.py --image_folder data/preprocess/emdb_stand --output_folder output/emdb_stand
+        // python demo.py --image_folder data/ssp_3d/images --output_folder output/ssp_3d
+        // python demo.py --image_folder data/3dpw --output_folder output/3dpw_depth
+        // python demo.py --image_folder data/3dpw --output_folder output/3dpw_depth > /home/zzb/pydata/recons/CameraHMR/output/3dpw_depth/run.log 2>&1
+        {
+            "name": "Debugpy: Demo",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/demo.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--image_folder",
+                // "demo_images",
+                // "data/preprocess/emdb_stand",
+                // "data/ssp_3d/images",
+                // "data/3dpw",
+                "data/fat",
+                "--output_folder",
+                // "output_images",
+                // "output/emdb_stand"
+                // "output/ssp_3d",
+                // "output/3dpw_depth"
+                "output/fat"
+            ],
+            "justMyCode": true
+        },
+        // python ./CamSMPLify/optimize.py --vis True
+        {
+            "name": "Debugpy: CamSMPLify",
+            "type": "debugpy",
+            "request": "launch",
+            "program": "${workspaceFolder}/CamSMPLify/optimize.py",
+            "console": "integratedTerminal",
+            "args": [
+                "--vis",
+                "True",
+                "--image_dir",
+                "data/preprocess/emdb_stand"
+            ],
+            "justMyCode": true
+        },
+    ]
+}
